@@ -1,14 +1,39 @@
 .flipDisplay {
+	display:		block;
 	&>div {
 		display:	inline-block;
 	}
 	
+	&.large {
+		div {
+			background-image:	url('images/digit-lg.png');
+			background-position: 0px 0px;
+			height:				77px;
+			width:				53px;
+		}
+	}
 	&.medium {
 		div {
 			background-image:	url('images/digit-md.png');
 			background-position: 0px 0px;
 			height:				52px;
 			width:				36px;
+		}
+	}
+	&.small {
+		div {
+			background-image:	url('images/digit-sm.png');
+			background-position: 0px 0px;
+			height:				35px;
+			width:				24px;
+		}
+	}
+	&.tiny {
+		div {
+			background-image:	url('images/digit-xs.png');
+			background-position: 0px 0px;
+			height:				24px;
+			width:				16px;
 		}
 	}
 }

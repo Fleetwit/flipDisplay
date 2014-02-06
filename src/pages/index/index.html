@@ -3,7 +3,10 @@
 		<h3 class="panel-title">Basic Use</h3>
 	</div>
 	<div class="panel-body">
-		<div id="display_1"></div>
+		<div id="display_1_large"></div>
+		<div id="display_1_medium"></div>
+		<div id="display_1_small"></div>
+		<div id="display_1_tiny"></div>
 		<div class="input-group" style="width:200px;">
 			<input type="text" class="form-control" id="display_1_input" placeholder="enter a number">
 			<span class="input-group-btn">
@@ -13,12 +16,52 @@
 	</div>
 </div>
 
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Format seconds</h3>
+	</div>
+	<div class="panel-body">
+		<div id="display_2"></div>
+		<div class="input-group" style="width:200px;">
+			<input type="text" class="form-control" id="display_2_input" placeholder="enter a number of seconds">
+			<span class="input-group-btn">
+				<button class="btn btn-default" type="button" id="display_2_button">Update</button>
+			</span>
+		</div>
+	</div>
+</div>
+
 <script type="text/javascript">
 	$(function() {
-		var display_1 = new flipDisplay($("#display_1"));
-			display_1.display("12345");
+		var display_1_large = new flipDisplay($("#display_1_large"), {
+			size:	"large"
+		});
+			display_1_large.display("12345", true);
+		var display_1_medium = new flipDisplay($("#display_1_medium"), {
+			size:	"medium"
+		});
+			display_1_medium.display("12345", true);
+		var display_1_small = new flipDisplay($("#display_1_small"), {
+			size:	"small"
+		});
+			display_1_small.display("12345", true);
+		var display_1_tiny = new flipDisplay($("#display_1_tiny"), {
+			size:	"tiny"
+		});
+			display_1_tiny.display("12345", true);
 		$("#display_1_button").click(function() {
-			display_1.display($("#display_1_input").val());
+			display_1_large.display($("#display_1_input").val());
+			display_1_medium.display($("#display_1_input").val());
+			display_1_small.display($("#display_1_input").val());
+			display_1_tiny.display($("#display_1_input").val());
+		})
+		
+		
+		
+		var display_2 = new flipDisplay($("#display_2"));
+			display_2.displayTime(12345);
+		$("#display_2_button").click(function() {
+			display_2.displayTime($("#display_2_input").val());
 		})
 	});
 </script>

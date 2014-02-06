@@ -15,42 +15,51 @@
 			speed:	500
 		}, options);
 		
-		console.log("container",container);
-		
 		this.container 	= container;
 		
 		this.container.addClass("flipDisplay").addClass(this.options.size);
 		this.displays	= [];
 		
 		this.sizeSettings = {
-			medium:	{
-				number:		52,
-				special:	6
-			},
 			large:	{
+				width:		53,
 				number:		77,
-				special:	6
+				colon:		[20, 12],
+				comma:		[41, 12]
+			},
+			medium:	{
+				width:		36,
+				number:		52,
+				colon:		[14, 8],
+				comma:		[28, 8]
 			},
 			small:	{
+				width:		24,
 				number:		35,
-				special:	6
+				colon:		[8, 7],
+				comma:		[18, 7]
 			},
 			tiny:	{
+				width:		16,
 				number:		24,
-				special:	6
+				colon:		[5, 5],
+				comma:		[12, 5]
 			}
 		};
 	};
 	flipDisplay.prototype.displayTime = function(time) {
-		var dhms = this.formatTime(time);
+		var dhms = this.formatTime(time*1);
+		console.log("dhms",dhms, dhms.join(":"));
+		this.display(dhms.join(":"));
 	};
-	flipDisplay.prototype.display = function(str, options) {
+	flipDisplay.prototype.display = function(str, skipAnimation) {
 		var scope = this;
 		var parts = str.split('');
 		var index = 0;
 		// Remove the cells if there are too many
 		if (this.displays.length > parts.length) {
 			var removeList = this.displays.slice(parts.length);
+			console.log("removeList",removeList);
 			_.each(removeList, function(el) {
 				el.fadeOut(function() {
 					el.remove();
@@ -63,19 +72,18 @@
 			if (!scope.displays[index]) {
 				scope.createCell();
 			}
-			scope.displayPart(part, index);
+			scope.displayPart(part, index, skipAnimation);
 			index++;
 		});
 	};
 	flipDisplay.prototype.createCell = function() {
-		console.log("creating new cell");
 		var div = dom("div", this.container);
 			div.data('flipValue', 0);
 			div.hide().fadeIn();
 		this.displays.push(div);
 		return div;
 	};
-	flipDisplay.prototype.displayPart = function(n, index) {
+	flipDisplay.prototype.displayPart = function(n, index, skipAnimation) {
 		var scope = this;
 		
 		var div = this.displays[index];
@@ -87,43 +95,70 @@
 		var currentValue = div.data('flipValue')*1;
 		
 		// Calculate the positions
-		var pos = {
-			start:	currentValue*this.sizeSettings[this.options.size].number*6*-1,
-			end:	n*this.sizeSettings[this.options.size].number*6*-1
-		};
-		pos.current = pos.start;
-		var steps 		= Math.abs(n-currentValue)*6;
-		var stepSize	= (pos.end-pos.start)/steps;
-		
-		console.log("From "+currentValue+" to "+n, pos, "Steps: "+steps, "stepSize: "+stepSize);
-		
-		if (steps > 0) {
-			var c = 0;
-			var itv = setInterval(function() {
-				
-				pos.current += stepSize;
-				
-				div.css('background-position', '0px '+pos.current+'px');
-				
-				
-				// Counter and interval break
-				if (pos.current == pos.end) {
-					clearInterval(itv);
-					div.data('flipValue', n);
+		if (n >= 0 && n <= 9) {
+			var pos = {
+				start:	currentValue*this.sizeSettings[this.options.size].number*6*-1,
+				end:	n*this.sizeSettings[this.options.size].number*6*-1
+			};
+			pos.current 	= pos.start;
+			var steps 		= Math.abs(n-currentValue)*6;
+			var stepSize	= (pos.end-pos.start)/steps;
+			
+			if (skipAnimation) {
+				div.css({
+					'background-position':	'0px '+pos.end+'px',
+					width:					scope.sizeSettings[this.options.size].width
+				});
+				div.data('flipValue', n);
+			} else {
+				if (steps > 0) {
+					var c = 0;
+					var itv = setInterval(function() {
+						
+						pos.current += stepSize;
+						
+						div.css({
+							'background-position':	'0px '+pos.current+'px',
+							width:					scope.sizeSettings[scope.options.size].width
+						});
+						
+						
+						// Counter and interval break
+						if (pos.current == pos.end) {
+							clearInterval(itv);
+							div.data('flipValue', n);
+						}
+						c++;
+					}, this.options.speed/steps);
 				}
-				c++;
-			}, this.options.speed/steps);
+			}
+		} else {
+			if (n == ":") {
+				div.css({
+					'background-position':	(this.sizeSettings[this.options.size].colon[0]*-1)+'px '+(((10*this.sizeSettings[this.options.size].number*6))*-1)+'px',
+					width:					this.sizeSettings[this.options.size].colon[1]
+				});
+				div.data('flipValue', 10);
+			}
+			if (n == ".") {
+				div.css({
+					'background-position':	(this.sizeSettings[this.options.size].comma[0]*-1)+'px '+(((10*this.sizeSettings[this.options.size].number*6))*-1)+'px',
+					width:					this.sizeSettings[this.options.size].comma[1]
+				});
+				div.data('flipValue', 10);
+			}
 		}
 	};
 	flipDisplay.prototype.formatTime = function(seconds) {
 		var days 		= Math.floor(seconds / 86400);
-		hours 			= seconds - days * 86400;
+		console.log("seconds",seconds);
+		seconds 		= seconds - days * 86400;
 		var hours 		= Math.floor(seconds / 3600);
 		seconds 		= seconds - hours * 3600;
 		var minutes 	= Math.floor(seconds/60);
 		var seconds 	= seconds % 60;
 		seconds 		= Math.round(seconds);
-		var timestring 	= [days,hours,minutes,seconds];
+		var timestring 	= [days,this.formatNumber(hours),this.formatNumber(minutes),this.formatNumber(seconds)];
 		return timestring;
 	};
 	flipDisplay.prototype.formatNumber = function(number) {
