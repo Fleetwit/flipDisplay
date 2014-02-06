@@ -2,6 +2,9 @@
 
 A fancy number display inspired and using the images from http://xdsoft.net/jqplugins/flipcountdown/
 
+## Demo ##
+[http://fleetwit.github.io//flipDisplay/build/](http://fleetwit.github.io//flipDisplay/build/)
+
 
 ## License : MIT ##
 Permission is hereby granted, free of charge, to any person obtaining a copy
