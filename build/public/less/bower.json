@@ -1,0 +1,7 @@
+{
+	"name": "lesscss",
+	"version": "1.6.0",
+	"main": [
+		"http://www.fleetwit.com/system/libs/clientside/less/less-1.6.0.min.js"
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"name": "flipDisplay",
+	"version": "1.0.0",
+	"main": [
+		"flipDisplay.js",
+		"flipDisplay.less"
+	],
+	"dependencies":	{
+		"jquery":		"latest",
+		"underscore":	"latest"
+	}
+}

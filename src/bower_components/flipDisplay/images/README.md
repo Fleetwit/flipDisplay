@@ -1,0 +1,1 @@
+Those images are from [flipCountDown](http://xdsoft.net/jqplugins/flipcountdown/).

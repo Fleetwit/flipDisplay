@@ -1,0 +1,17 @@
+{
+	"name":			"index",
+	"files":		{
+		"index.html": {
+			"title":	"FlipDisplay: Fancy number display",
+			"filename":	"index.html"
+		}
+	},
+	"template":		"main.html",
+	"dependencies":	[
+		"jquery",
+		"examples",
+		"bootstrap",
+		"flipDisplay",
+		"lesscss"
+	]
+}
