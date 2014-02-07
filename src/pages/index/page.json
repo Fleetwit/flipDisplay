@@ -4,6 +4,13 @@
 		"index.html": {
 			"title":	"FlipDisplay: Fancy number display",
 			"filename":	"index.html"
+		},
+		"angular.html": {
+			"title":	"Angular-FlipDisplay: Fancy number display",
+			"filename":	"angular.html",
+			"dependencies":	[
+				"AngularJS"
+			]
 		}
 	},
 	"template":		"main.html",

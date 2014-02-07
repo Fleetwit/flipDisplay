@@ -8,10 +8,11 @@
 		<meta name="author" content="Julien Loutre">
 		<link rel="shortcut icon" href="favicon.png">
 		
-		<title>FlipDisplay: Fancy number display</title>
+		<title>Angular-FlipDisplay: Fancy number display</title>
 		
 		<link rel="stylesheet/less" type="text/css" href="public/flipDisplay/flipDisplay.less" />
-		<script src="public/jquery/jquery.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.min.js"></script>
+<script src="public/jquery/jquery.js"></script>
 <script src="public/bootstrap/./dist/js/bootstrap.js"></script>
 <script src="public/underscore/underscore-min.js"></script>
 <script src="public/flipDisplay/flipDisplay.js"></script>
@@ -39,8 +40,8 @@
 					</div>
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav">
-							<li class="active"><a href="index.html">Demo</a></li>
-							<li ><a href="angular.html">Angular Directive</a></li>
+							<li ><a href="index.html">Demo</a></li>
+							<li class="active"><a href="angular.html">Angular Directive</a></li>
 							<li><a href="mailto:julien@fleetwit.com">Contact</a></li>
 						</ul>
 					</div><!--/.nav-collapse -->
@@ -49,71 +50,47 @@
 		
 			<!-- Begin page content -->
 			<div class="container" style="padding-top: 80px;">
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-app="angularApp" ng-controller="demoCtrl">
 	<div class="panel-heading">
-		<h3 class="panel-title">Basic Use</h3>
+		<h3 class="panel-title">AngularJS Directive</h3>
 	</div>
 	<div class="panel-body">
-		<div id="display_1_large"></div>
-		<div id="display_1_medium"></div>
-		<div id="display_1_small"></div>
-		<div id="display_1_tiny"></div>
-		<div class="input-group" style="width:200px;">
-			<input type="text" class="form-control" id="display_1_input" placeholder="enter a number">
-			<span class="input-group-btn">
-				<button class="btn btn-default" type="button" id="display_1_button">Update</button>
-			</span>
-		</div>
-	</div>
-</div>
-
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title">Format seconds</h3>
-	</div>
-	<div class="panel-body">
-		<div id="display_2"></div>
-		<div class="input-group" style="width:200px;">
-			<input type="text" class="form-control" id="display_2_input" placeholder="enter a number of seconds">
-			<span class="input-group-btn">
-				<button class="btn btn-default" type="button" id="display_2_button">Update</button>
-			</span>
-		</div>
+		<div flipdisplay display="{{number}}" size="tiny"></div>
+		<input type="text" class="form-control" id="display_1_input" ng-model="number" placeholder="enter a number" style="width:200px;">
 	</div>
 </div>
 
 <script type="text/javascript">
-	$(function() {
-		var display_1_large = new flipDisplay($("#display_1_large"), {
-			size:	"large"
-		});
-			display_1_large.display("12345", true);
-		var display_1_medium = new flipDisplay($("#display_1_medium"), {
-			size:	"medium"
-		});
-			display_1_medium.display("12345", true);
-		var display_1_small = new flipDisplay($("#display_1_small"), {
-			size:	"small"
-		});
-			display_1_small.display("12345", true);
-		var display_1_tiny = new flipDisplay($("#display_1_tiny"), {
-			size:	"tiny"
-		});
-			display_1_tiny.display("12345", true);
-		$("#display_1_button").click(function() {
-			display_1_large.display($("#display_1_input").val());
-			display_1_medium.display($("#display_1_input").val());
-			display_1_small.display($("#display_1_input").val());
-			display_1_tiny.display($("#display_1_input").val());
-		})
+	
+	// Define the angular app
+	angular.module('angularApp', []).controller('demoCtrl', function($scope) {
+		$scope.number = 4564646;
 		
-		
-		
-		var display_2 = new flipDisplay($("#display_2"));
-			display_2.displayTime(12345, true);
-		$("#display_2_button").click(function() {
-			display_2.displayTime($("#display_2_input").val());
-		})
+	}).directive('flipdisplay', function() {
+		function link(scope, element, attrs) {
+			
+			if (!attrs.size) {
+				attrs.size = "medium"
+			}
+			
+			var flipDisplay = new window.flipDisplay(element, {
+				size:	attrs.size
+			});
+			flipDisplay.display(attrs.display);
+			
+			attrs.$observe('display', function(value) {
+				flipDisplay.display(value);
+			});
+			
+			
+		}
+	
+		return {
+			link: link,
+			scope:	{
+				display:	'@'
+			}
+		};
 	});
 </script>
 			</div>

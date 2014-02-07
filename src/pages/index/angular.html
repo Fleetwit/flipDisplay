@@ -1,0 +1,43 @@
+<div class="panel panel-default" ng-app="angularApp" ng-controller="demoCtrl">
+	<div class="panel-heading">
+		<h3 class="panel-title">AngularJS Directive</h3>
+	</div>
+	<div class="panel-body">
+		<div flipdisplay display="{{number}}" size="tiny"></div>
+		<input type="text" class="form-control" id="display_1_input" ng-model="number" placeholder="enter a number" style="width:200px;">
+	</div>
+</div>
+
+<script type="text/javascript">
+	
+	// Define the angular app
+	angular.module('angularApp', []).controller('demoCtrl', function($scope) {
+		$scope.number = 4564646;
+		
+	}).directive('flipdisplay', function() {
+		function link(scope, element, attrs) {
+			
+			if (!attrs.size) {
+				attrs.size = "medium"
+			}
+			
+			var flipDisplay = new window.flipDisplay(element, {
+				size:	attrs.size
+			});
+			flipDisplay.display(attrs.display);
+			
+			attrs.$observe('display', function(value) {
+				flipDisplay.display(value);
+			});
+			
+			
+		}
+	
+		return {
+			link: link,
+			scope:	{
+				display:	'@'
+			}
+		};
+	});
+</script>

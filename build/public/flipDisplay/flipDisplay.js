@@ -47,14 +47,14 @@
 			}
 		};
 	};
-	flipDisplay.prototype.displayTime = function(time) {
+	flipDisplay.prototype.displayTime = function(time, skipAnimation) {
 		var dhms = this.formatTime(time*1);
-		console.log("dhms",dhms, dhms.join(":"));
-		this.display(dhms.join(":"));
+		console.log("dhms",dhms, dhms.join(":"), skipAnimation);
+		this.display(dhms.join(":"), skipAnimation);
 	};
 	flipDisplay.prototype.display = function(str, skipAnimation) {
 		var scope = this;
-		var parts = str.split('');
+		var parts = str.toString().split('');
 		var index = 0;
 		// Remove the cells if there are too many
 		if (this.displays.length > parts.length) {
