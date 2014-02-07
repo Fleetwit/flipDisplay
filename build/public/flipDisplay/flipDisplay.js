@@ -49,7 +49,7 @@
 	};
 	flipDisplay.prototype.displayTime = function(time, skipAnimation, auto) {
 		var dhms = this.formatTime(time*1);
-		console.log("displayTime",time, skipAnimation, auto);
+		
 		if (auto) {
 			var i;
 			var l = dhms.length;
@@ -73,7 +73,6 @@
 		// Remove the cells if there are too many
 		if (this.displays.length > parts.length) {
 			var removeList = this.displays.slice(parts.length);
-			console.log("removeList",removeList);
 			_.each(removeList, function(el) {
 				el.fadeOut(function() {
 					el.remove();
@@ -165,7 +164,6 @@
 	};
 	flipDisplay.prototype.formatTime = function(seconds) {
 		var days 		= Math.floor(seconds / 86400);
-		console.log("seconds",seconds);
 		seconds 		= seconds - days * 86400;
 		var hours 		= Math.floor(seconds / 3600);
 		seconds 		= seconds - hours * 3600;
