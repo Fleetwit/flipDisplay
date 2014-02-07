@@ -55,7 +55,13 @@
 		<h3 class="panel-title">AngularJS Directive</h3>
 	</div>
 	<div class="panel-body">
+		<b>Number</b>
 		<div flipdisplay display="{{number}}" size="tiny"></div>
+		<b>Time (full d:h:m:s)</b>
+		<div flipdisplay display="{{number}}" size="tiny" time="true"></div>
+		<b>Time (auto)</b>
+		<div flipdisplay display="{{number}}" size="tiny" time="true" auto="true"></div>
+		<hr />
 		<input type="text" class="form-control" id="display_1_input" ng-model="number" placeholder="enter a number" style="width:200px;">
 	</div>
 </div>
@@ -64,7 +70,7 @@
 	
 	// Define the angular app
 	angular.module('angularApp', []).controller('demoCtrl', function($scope) {
-		$scope.number = 4564646;
+		$scope.number = 123;
 		
 	}).directive('flipdisplay', function() {
 		function link(scope, element, attrs) {
@@ -76,10 +82,19 @@
 			var flipDisplay = new window.flipDisplay(element, {
 				size:	attrs.size
 			});
-			flipDisplay.display(attrs.display);
+			
+			if (attrs.time == "true") {
+				flipDisplay.displayTime(attrs.display, false, attrs.auto);
+			} else {
+				flipDisplay.display(attrs.display);
+			}
 			
 			attrs.$observe('display', function(value) {
-				flipDisplay.display(value);
+				if (attrs.time == "true") {
+					flipDisplay.displayTime(value, false, attrs.auto);
+				} else {
+					flipDisplay.display(value);
+				}
 			});
 			
 			

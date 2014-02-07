@@ -47,9 +47,23 @@
 			}
 		};
 	};
-	flipDisplay.prototype.displayTime = function(time, skipAnimation) {
+	flipDisplay.prototype.displayTime = function(time, skipAnimation, auto) {
 		var dhms = this.formatTime(time*1);
-		console.log("dhms",dhms, dhms.join(":"), skipAnimation);
+		console.log("displayTime",time, skipAnimation, auto);
+		if (auto) {
+			var i;
+			var l = dhms.length;
+			for (i=0;i<l;i++) {
+				if (dhms[i] > 0) {
+					dhms = dhms.slice(i);
+					break;
+				}
+				if (i == l-1 && dhms[i] == 0) {
+					dhms = dhms.slice(l-1);
+				}
+			}
+		}
+		
 		this.display(dhms.join(":"), skipAnimation);
 	};
 	flipDisplay.prototype.display = function(str, skipAnimation) {
