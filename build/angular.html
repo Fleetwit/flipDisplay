@@ -55,13 +55,30 @@
 		<h3 class="panel-title">AngularJS Directive</h3>
 	</div>
 	<div class="panel-body">
+		
 		<b>Number</b>
 		<div flipdisplay display="{{number}}" size="tiny"></div>
+		
 		<b>Time (full d:h:m:s)</b>
 		<div flipdisplay display="{{number}}" size="tiny" time="true"></div>
+		
 		<b>Time (auto)</b>
-		<div flipdisplay display="{{number}}" size="tiny" time="true" auto="true"></div>
+		<div flipdisplay display="{{number}}" size="tiny" time="true" autosize="true"></div>
+		
+		<b>Time (input in milliseconds)</b>
+		<div flipdisplay display="{{number}}" size="tiny" time="true" autosize="true" ms="true"></div>
+		
+		<b>Time (custom format: s:m:d)</b>
+		<div flipdisplay display="{{number}}" size="tiny" time="true" format="s:m:d"></div>
+		
+		<b>Time (limit to 2 parts)</b>
+		<div flipdisplay display="{{number}}" size="tiny" time="true" length="2"></div>
+		
+		<b>Time (no animation)</b>
+		<div flipdisplay display="{{number}}" size="tiny" time="true" animate="false"></div>
+		
 		<hr />
+		
 		<input type="text" class="form-control" id="display_1_input" ng-model="number" placeholder="enter a number" style="width:200px;">
 	</div>
 </div>
@@ -75,27 +92,58 @@
 	}).directive('flipdisplay', function() {
 		function link(scope, element, attrs) {
 			
-			if (!attrs.size) {
-				attrs.size = "medium"
-			}
+			var default_settings = {
+				display:	12345,
+				time:		false,
+				autosize:	false,
+				format:		"d:h:m:s",
+				length:		false,
+				length:		false,
+				size:		'medium',
+				animate:	true,
+				ms:			false
+			};
 			
-			var flipDisplay = new window.flipDisplay(element, {
-				size:	attrs.size
-			});
+			attrs = _.extend({}, default_settings, attrs);
 			
-			if (attrs.time == "true") {
-				flipDisplay.displayTime(attrs.display, false, attrs.auto);
-			} else {
-				flipDisplay.display(attrs.display);
-			}
+			var flipDisplay = new window.flipDisplay(element, attrs);
 			
-			attrs.$observe('display', function(value) {
-				if (attrs.time == "true") {
-					flipDisplay.displayTime(value, false, attrs.auto);
-				} else {
-					flipDisplay.display(value);
+			
+			var update = function() {
+				_.map(attrs, function(value, key) {
+					if (_.has(default_settings, key)) {
+						if (attrs[key] == "false") {
+							attrs[key] = false;
+						}
+						if (attrs[key] == "true") {
+							attrs[key] = true;
+						}
+					}
+				});
+				
+				if (attrs.ms) {
+					attrs.display = Math.round(attrs.display/1000);
 				}
+				
+				if (attrs.time) {
+					flipDisplay.displayTime(attrs.display, attrs);
+				} else {
+					flipDisplay.display(attrs.display, attrs);
+				}
+			}
+			update();
+			
+			
+			
+			
+			// If any of the monitored argument is changed, we update the display
+			_.each(_.keys(default_settings), function(key) {
+				attrs.$observe(key, function(value) {
+					attrs[key] 	= value;
+					update();
+				});
 			});
+			
 			
 			
 		}
@@ -103,7 +151,14 @@
 		return {
 			link: link,
 			scope:	{
-				display:	'@'
+				display:	'@',
+				time:		'@',
+				autosize:	'@',
+				format:		'@',
+				length:		'@',
+				size:		'@',
+				animate:	'@',
+				ms:			'@'
 			}
 		};
 	});

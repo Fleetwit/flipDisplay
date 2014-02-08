@@ -7,10 +7,10 @@
 		<div id="display_1_medium"></div>
 		<div id="display_1_small"></div>
 		<div id="display_1_tiny"></div>
-		<div class="input-group" style="width:200px;">
-			<input type="text" class="form-control" id="display_1_input" placeholder="enter a number">
+		<div class="input-group" style="width:300px;">
+			<input type="text" class="form-control" id="display_1_input" placeholder="enter a number" value="12345">
 			<span class="input-group-btn">
-				<button class="btn btn-default" type="button" id="display_1_button">Update</button>
+				<button class="btn btn-primary" type="button" id="display_1_button">Update</button>
 			</span>
 		</div>
 	</div>
@@ -22,12 +22,38 @@
 	</div>
 	<div class="panel-body">
 		<div id="display_2"></div>
-		<div class="input-group" style="width:200px;">
-			<input type="text" class="form-control" id="display_2_input" placeholder="enter a number of seconds">
+		<div class="input-group" style="width:300px;">
+			<input type="text" class="form-control" id="display_2_input" placeholder="enter a number of seconds" value="12345">
 			<span class="input-group-btn">
-				<button class="btn btn-default" type="button" id="display_2_button">Update</button>
+				<button class="btn btn-primary" type="button" id="display_2_button">Update</button>
 			</span>
 		</div>
+		
+		<div class="input-group" style="width:300px;">
+			<input type="text" class="form-control" id="display_2_format" placeholder="d:h:m:s" value="d:h:m:s">
+			<span class="input-group-btn">
+				<button class="btn btn-primary" type="button" id="display_2_format_button">Update</button>
+			</span>
+		</div>
+		
+		<div class="input-group" style="width:300px;">
+			<input type="text" class="form-control" id="display_2_length" placeholder="d:h:m:s" value="2">
+			<span class="input-group-btn">
+				<button class="btn btn-primary" type="button" id="display_2_length_button">Update</button>
+			</span>
+		</div>
+		
+		<span class="btn-group">
+			<button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+				Display Size <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu" role="menu">
+				<li><a href="javascript:void(0);" data-size="tiny" class="size_option">Tiny</a></li>
+				<li><a href="javascript:void(0);" data-size="small" class="size_option">Small</a></li>
+				<li><a href="javascript:void(0);" data-size="medium" class="size_option">Medium</a></li>
+				<li><a href="javascript:void(0);" data-size="large" class="size_option">Large</a></li>
+			</ul>
+		</span>
 	</div>
 </div>
 
@@ -36,19 +62,27 @@
 		var display_1_large = new flipDisplay($("#display_1_large"), {
 			size:	"large"
 		});
-			display_1_large.display("12345", true);
+			display_1_large.display("12345", {
+				animate: false
+			});
 		var display_1_medium = new flipDisplay($("#display_1_medium"), {
 			size:	"medium"
 		});
-			display_1_medium.display("12345", true);
+			display_1_medium.display("12345", {
+				animate: false
+			});
 		var display_1_small = new flipDisplay($("#display_1_small"), {
 			size:	"small"
 		});
-			display_1_small.display("12345", true);
+			display_1_small.display("12345", {
+				animate: false
+			});
 		var display_1_tiny = new flipDisplay($("#display_1_tiny"), {
 			size:	"tiny"
 		});
-			display_1_tiny.display("12345", true);
+			display_1_tiny.display("12345", {
+				animate: false
+			});
 		$("#display_1_button").click(function() {
 			display_1_large.display($("#display_1_input").val());
 			display_1_medium.display($("#display_1_input").val());
@@ -59,9 +93,36 @@
 		
 		
 		var display_2 = new flipDisplay($("#display_2"));
-			display_2.displayTime(12345, true);
+			display_2.displayTime(12345, {
+				format: 	$("#display_2_format").val(),
+				animate: 	false,
+				autosize:	false
+			});
 		$("#display_2_button").click(function() {
-			display_2.displayTime($("#display_2_input").val());
+			display_2.displayTime($("#display_2_input").val(), {
+				format: 	$("#display_2_format").val(),
+				animate: 	true,
+				autosize:	false
+			});
+		})
+		$("#display_2_format_button").click(function() {
+			display_2.displayTime($("#display_2_input").val(), {
+				format: 	$("#display_2_format").val(),
+				animate: 	true,
+				autosize:	false
+			});
+		})
+		$("#display_2_length_button").click(function() {
+			display_2.displayTime($("#display_2_input").val(), {
+				format: 	$("#display_2_format").val(),
+				length:		$("#display_2_length").val(),
+				animate: 	true,
+				autosize:	false
+			});
+		})
+		$(".size_option").click(function() {
+			var size = $(this).attr('data-size');
+			display_2.resize(size);
 		})
 	});
 </script>

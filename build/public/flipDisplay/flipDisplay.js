@@ -47,29 +47,81 @@
 			}
 		};
 	};
-	flipDisplay.prototype.displayTime = function(time, skipAnimation, auto) {
+	flipDisplay.prototype.displayTime = function(time, options) {
+		
+		options = _.extend({
+			animate:	true,	// Animate the display
+			autosize:	false,	// Remove empty data
+			length:		false,	// max length,
+			format:		'd:h:m:s'
+		},options);
+		
+		var i;
+		
+		time = time.toString().replace(/[^0-9\:\.]/g, "");
+		
 		var dhms = this.formatTime(time*1);
 		
-		if (auto) {
-			var i;
-			var l = dhms.length;
+		var map = {
+			d:	0,
+			h:	1,
+			m:	2,
+			s:	3
+		};
+		
+		var format_split 	= options.format.split(':');
+		var filtered 		= [];
+		_.each(format_split, function(formatRule) {
+			if (map[formatRule] != undefined) {
+				filtered.push(dhms[map[formatRule]]);
+			}
+		});
+		
+		if (options.autosize) {
+			var l = filtered.length;
 			for (i=0;i<l;i++) {
-				if (dhms[i] > 0) {
-					dhms = dhms.slice(i);
+				if (filtered[i] > 0) {
+					filtered = filtered.slice(i);
 					break;
 				}
-				if (i == l-1 && dhms[i] == 0) {
-					dhms = dhms.slice(l-1);
+				if (i == l-1 && filtered[i] == 0) {
+					filtered = filtered.slice(l-1);
 				}
 			}
 		}
 		
-		this.display(dhms.join(":"), skipAnimation);
+		if (options.length && filtered.length > options.length) {
+			for (i=0;i<filtered.length;i++) {
+				if (filtered[i]*1 > 0) {
+					filtered = filtered.slice(i, i+options.length*1);
+					console.log("slice",i, i+options.length*1);
+					break;
+				}
+				
+			}
+		}
+		
+		if (options.length && filtered.length < options.length) {
+			for (i=0;i<(options.length-filtered.length);i++) {
+				filtered.splice(0,0,this.formatNumber(0))
+			}
+		}
+		
+		
+		this.display(filtered.join(":"), options);
 	};
-	flipDisplay.prototype.display = function(str, skipAnimation) {
+	flipDisplay.prototype.display = function(str, options) {
+		
+		options = _.extend({
+			animate:	true
+		},options);
+		
+		str = str.replace(/[^0-9\:\.]/g, "");
+		
 		var scope = this;
 		var parts = str.toString().split('');
 		var index = 0;
+		
 		// Remove the cells if there are too many
 		if (this.displays.length > parts.length) {
 			var removeList = this.displays.slice(parts.length);
@@ -85,7 +137,7 @@
 			if (!scope.displays[index]) {
 				scope.createCell();
 			}
-			scope.displayPart(part, index, skipAnimation);
+			scope.displayPart(part, index, options);
 			index++;
 		});
 	};
@@ -96,12 +148,44 @@
 		this.displays.push(div);
 		return div;
 	};
-	flipDisplay.prototype.displayPart = function(n, index, skipAnimation) {
+	flipDisplay.prototype.resize = function(size) {
+		var scope = this;
+		
+		this.options.size = size;
+		
+		this.container.removeClass("tiny").removeClass("small").removeClass("medium").removeClass("large").addClass(size);
+		
+		this.container.children().each(function(index, el) {
+			scope.draw($(el), $(el).data('flipRealValue'), {
+				redraw:	true
+			});
+		});
+	};
+	flipDisplay.prototype.displayPart = function(n, index, options) {
+		
+		options = _.extend({
+			animate:	true
+		},options);
+		
 		var scope = this;
 		
 		var div = this.displays[index];
 		
-		if (div.data('flipValue').toString() == n.toString()) {
+		// Store the real value, even if it's invalid (for redraw)
+		div.data('flipRealValue', n);
+		
+		this.draw(div, n, options);
+	};
+	flipDisplay.prototype.draw = function(div, n, options) {
+		
+		options = _.extend({
+			animate:	true,
+			redraw:		false
+		},options);
+		
+		var scope = this;
+		
+		if (div.data('flipValue').toString() == n.toString() && !options.redraw) {
 			return false;
 		}
 		
@@ -117,7 +201,8 @@
 			var steps 		= Math.abs(n-currentValue)*6;
 			var stepSize	= (pos.end-pos.start)/steps;
 			
-			if (skipAnimation) {
+			
+			if (!options.animate || options.redraw) {
 				div.css({
 					'background-position':	'0px '+pos.end+'px',
 					width:					scope.sizeSettings[this.options.size].width
